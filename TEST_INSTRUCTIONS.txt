@@ -1,0 +1,65 @@
+HOW TO TEST THE BLUEPRINT MODE
+===============================
+
+I just created a test blueprint: test_blueprint.png
+
+TEST DATA FOR THE SAMPLE BLUEPRINT:
+-----------------------------------
+
+When testing blueprint_mode.py with test_blueprint.png, use these test values:
+
+ROOMS (4 rooms shown):
+--------------------
+1. Living Room: 20' × 12' = 240 sq ft
+2. Kitchen: 15' × 12' = 180 sq ft  
+3. Bedroom: 15' × 12' = 180 sq ft
+4. Bathroom: 8' × 10' = 80 sq ft
+
+For obstacles, you can add (optional):
+- Living Room: Fireplace (20 sq ft)
+- Kitchen: Island (25 sq ft)
+- Bedroom: Closet (15 sq ft)
+
+EMPLOYEES:
+---------
+- John: $35/hour
+- Mike: $22/hour
+
+JOB PARAMETERS:
+--------------
+Days: 2
+Sanding cost per sq ft: $1.00
+Customer provides wood: No
+Material cost per sq ft: $8.50
+Pickup fee: $150.00
+
+HOW TO RUN THE TEST:
+-------------------
+python3 blueprint_mode.py
+
+When prompted for blueprint path, enter:
+"Sample Ground Floor Plan.pdf"
+
+(Or use: test_blueprint.png for the simple test image)
+
+Then enter the test data above!
+
+
+ALTERNATIVE - NO BLUEPRINT:
+---------------------------
+You can also test without a blueprint file:
+- Just press Enter when asked for blueprint path
+- The program will work fine without showing an image
+- Enter the same test data
+
+
+ALTERNATIVE - REAL BLUEPRINT:
+-----------------------------
+You can also use any real blueprint/image:
+1. Download from: https://www.sample.net/business/plans/floor-plans/
+2. Save as: my_blueprint.jpg (or .png, .pdf)
+3. Use that file path instead
+
+Or use ANY image file - it doesn't have to be a blueprint!
+The program will try to display it for reference.
+

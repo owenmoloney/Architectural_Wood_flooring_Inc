@@ -1,0 +1,48 @@
+FLOORING CALCULATOR - QUICK REFERENCE
+=====================================
+
+TWO MODES AVAILABLE:
+--------------------
+
+1. STANDARD MODE (main.py)
+   - Simple, straightforward input
+   - Direct entry of square feet for rooms
+   - Best for: Quick estimates without blueprints
+
+2. BLUEPRINT MODE (blueprint_mode.py)
+   - Visual blueprint reference while entering
+   - Choice of Length×Width or direct square feet
+   - Review screen before calculation
+   - Best for: Accurate measurements with blueprints
+
+
+CALCULATION ENGINE:
+-------------------
+Both modes use the EXACT SAME calculation engine
+- Sanding cost per sq ft
+- Labor cost (multiple employees, hourly rates, days)
+- Material cost (customer provides OR company provides)
+- 10% waste factor on materials
+- Obstacle exclusions
+
+
+KEY DIFFERENCES:
+----------------
+Standard Mode:
+- Faster input for experienced users
+- Direct prompt flow
+
+Blueprint Mode:
+- Displays blueprint image for reference
+- Two input options: L×W or sq ft
+- Review/confirm step before calculating
+- Enhanced visual guidance
+
+
+RECOMMENDED USE:
+----------------
+• Standard daily estimates → main.py
+• Detailed blueprint-based quotes → blueprint_mode.py
+
+Both produce identical cost calculations!
+
