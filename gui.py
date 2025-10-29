@@ -5,9 +5,11 @@ Desktop application using Tkinter
 """
 
 import tkinter as tk
-from tkinter import ttk, messagebox, scrolledtext
+from tkinter import ttk, messagebox, filedialog
 from main import FlooringJob, Room, Obstacle, Employee
 from typing import List, Optional
+import os
+import io
 
 
 class FlooringCalculatorGUI:
@@ -18,6 +20,8 @@ class FlooringCalculatorGUI:
         
         # Initialize job data
         self.job = FlooringJob()
+        self.blueprint_path = None
+        self.blueprint_window = None
         
         # Create main layout
         self.create_widgets()
@@ -27,12 +31,19 @@ class FlooringCalculatorGUI:
     
     def create_widgets(self):
         """Create all UI widgets"""
+        # Menu bar with Blueprint button
+        menu_frame = ttk.Frame(self.root)
+        menu_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=10, pady=5)
+        menu_frame.columnconfigure(0, weight=1)
+        
+        ttk.Button(menu_frame, text="Load Blueprint", command=self.load_blueprint).pack(side=tk.RIGHT, padx=5)
+        
         # Main container
         main_frame = ttk.Frame(self.root, padding="10")
-        main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        main_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
         self.root.columnconfigure(0, weight=1)
-        self.root.rowconfigure(0, weight=1)
+        self.root.rowconfigure(1, weight=1)
         main_frame.columnconfigure(0, weight=1)
         main_frame.columnconfigure(1, weight=1)
         main_frame.rowconfigure(0, weight=1)
@@ -574,6 +585,105 @@ class FlooringCalculatorGUI:
         """Explicitly calculate and show costs"""
         self.update_cost_summary()
         messagebox.showinfo("Calculation Complete", "Costs have been calculated. See the Cost Summary panel.")
+    
+    def load_blueprint(self):
+        """Load and display blueprint file"""
+        filetypes = [
+            ("All Supported", "*.pdf *.png *.jpg *.jpeg *.gif *.bmp"),
+            ("PDF files", "*.pdf"),
+            ("Image files", "*.png *.jpg *.jpeg *.gif *.bmp"),
+            ("All files", "*.*")
+        ]
+        
+        filepath = filedialog.askopenfilename(
+            title="Select Blueprint File",
+            filetypes=filetypes
+        )
+        
+        if filepath:
+            self.blueprint_path = filepath
+            self.display_blueprint_window()
+    
+    def display_blueprint_window(self):
+        """Display blueprint in a separate window"""
+        if not self.blueprint_path or not os.path.exists(self.blueprint_path):
+            messagebox.showerror("Error", "Blueprint file not found.")
+            return
+        
+        # Close existing blueprint window if open
+        if self.blueprint_window:
+            self.blueprint_window.destroy()
+        
+        # Create new window
+        self.blueprint_window = tk.Toplevel(self.root)
+        self.blueprint_window.title(f"Blueprint: {os.path.basename(self.blueprint_path)}")
+        self.blueprint_window.geometry("800x600")
+        
+        try:
+            is_pdf = self.blueprint_path.lower().endswith('.pdf')
+            
+            if is_pdf:
+                # Handle PDF
+                try:
+                    import fitz  # PyMuPDF
+                    pdf_doc = fitz.open(self.blueprint_path)
+                    first_page = pdf_doc[0]
+                    
+                    zoom = 1.5
+                    mat = fitz.Matrix(zoom, zoom)
+                    pix = first_page.get_pixmap(matrix=mat)
+                    
+                    from PIL import Image, ImageTk
+                    img_data = pix.tobytes("ppm")
+                    img = Image.open(io.BytesIO(img_data))
+                    
+                    pdf_doc.close()
+                except ImportError:
+                    messagebox.showinfo("Info", "PyMuPDF not installed. Install with: pip install pymupdf to view PDFs in the GUI.\n\nOpening in system viewer instead.")
+                    import subprocess
+                    import platform
+                    if platform.system() == 'Darwin':
+                        subprocess.Popen(['open', self.blueprint_path])
+                    elif platform.system() == 'Windows':
+                        os.startfile(self.blueprint_path)
+                    else:
+                        subprocess.Popen(['xdg-open', self.blueprint_path])
+                    self.blueprint_window.destroy()
+                    return
+                except Exception as e:
+                    messagebox.showerror("Error", f"Could not load PDF: {e}")
+                    self.blueprint_window.destroy()
+                    return
+            else:
+                # Handle image files
+                from PIL import Image, ImageTk
+                img = Image.open(self.blueprint_path)
+            
+            # Resize image to fit window while maintaining aspect ratio
+            window_width = 780
+            window_height = 560
+            img.thumbnail((window_width, window_height), Image.Resampling.LANCZOS)
+            
+            # Convert to PhotoImage for Tkinter
+            photo = ImageTk.PhotoImage(img)
+            
+            # Display image
+            label = tk.Label(self.blueprint_window, image=photo)
+            label.image = photo  # Keep a reference
+            label.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+            
+            # Add info label
+            info_text = f"File: {os.path.basename(self.blueprint_path)}\nUse this as reference while entering room measurements."
+            info_label = ttk.Label(self.blueprint_window, text=info_text, font=("", 9))
+            info_label.pack(pady=5)
+            
+        except ImportError:
+            messagebox.showerror("Error", "PIL/Pillow not installed. Install with: pip install pillow")
+            self.blueprint_window.destroy()
+        except Exception as e:
+            messagebox.showerror("Error", f"Could not load blueprint: {e}")
+            if self.blueprint_window:
+                self.blueprint_window.destroy()
     
     def clear_all(self):
         """Clear all inputs"""
