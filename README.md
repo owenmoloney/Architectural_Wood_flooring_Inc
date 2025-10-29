@@ -28,6 +28,18 @@ python3 main.py
 python3 blueprint_mode.py
 ```
 
+### Run the GUI Application:
+```bash
+python3 gui.py
+```
+
+Opens a desktop application with:
+- 4-panel layout (Rooms, Employees, Job Details, Cost Summary)
+- Real-time cost calculation
+- Add/edit/remove rooms and employees
+- Visual input forms
+- Cost breakdown display
+
 The blueprint mode includes:
 - Display blueprint images while entering data
 - Length × Width OR direct square feet entry
